@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+/* ============================================================================
+ *  BRAND THEME
+ * ----------------------------------------------------------------------------
+ *  Change the brand colours here and the whole site follows - buttons, links,
+ *  headings, badges, the hero, everything. These are Tailwind v4 theme tokens,
+ *  so `--color-brand-600` becomes `bg-brand-600`, `text-brand-600`, etc.
+ *
+ *  The WhatsApp greens are deliberately RESERVED for WhatsApp actions only,
+ *  so that "chat with us" always reads as the same, unmistakable button.
+ * ========================================================================== */
+@theme {
+  /* Primary brand: deep clinical teal ------------------------------------ */
+  --color-brand-50: #eefaff;
+  --color-brand-100: #d8f2fd;
+  --color-brand-200: #b6e8fb;
+  --color-brand-300: #7fd8f8;
+  --color-brand-400: #40c0ed;
+  --color-brand-500: #18a4d6;
+  --color-brand-600: #0b83b4;
+  --color-brand-700: #0c6991;
+  --color-brand-800: #105777;
+  --color-brand-900: #134864;
+  --color-brand-950: #0a2c42;
+
+  /* Ink: body copy and headings ------------------------------------------ */
+  --color-ink-900: #0b2230;
+  --color-ink-700: #274653;
+  --color-ink-500: #4d6b78;
+  --color-ink-300: #8aa2ac;
+
+  /* Surfaces ------------------------------------------------------------- */
+  --color-surface: #ffffff;
+  --color-surface-muted: #f4f8fa;
+  --color-hairline: #dbe6ec;
+
+  /* WhatsApp green - do not reuse for anything else ---------------------- */
+  --color-whatsapp: #25d366;
+  --color-whatsapp-dark: #1da851;
+  --color-whatsapp-deep: #128c7e;
+
+  /* Accent, used sparingly for badges ------------------------------------ */
+  --color-accent-500: #f0a020;
+  --color-accent-50: #fff8ec;
+
+  /* Typography ----------------------------------------------------------- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-display-face), var(--font-inter), ui-sans-serif,
+    system-ui, sans-serif;
+
+  /* Shape ---------------------------------------------------------------- */
+  --radius-card: 0.875rem;
+
+  /* Motion --------------------------------------------------------------- */
+  --animate-fade-up: fade-up 0.5s ease-out both;
+  --animate-slide-in: slide-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-toast-in: toast-in 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ============================================================================
+ *  BASE STYLES
+ * ========================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* One consistent, high-contrast focus ring across the whole site. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-200);
+    color: var(--color-brand-950);
+  }
+
+  /* Stop iOS Safari zooming in when a numeric input is focused. */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+@layer utilities {
+  /* Faint dot grid used behind the hero and CTA bands. */
+  .bg-dot-grid {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgb(255 255 255 / 0.16) 1px,
+      transparent 0
+    );
+    background-size: 22px 22px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Hide scrollbars on the horizontal category filter strip. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

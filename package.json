@@ -1,0 +1,24 @@
+{
+  "name": "tirupati-surgicals",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "//type": "ESM so database/seed/*.js parses without a reparse warning; frontend/ and backend/ have their own package.json and are unaffected.",
+  "type": "module",
+  "description": "Surgical equipment catalogue with a WhatsApp inquiry flow. Three parts: frontend/ (Next.js), backend/ (Express API), database/ (MySQL schema + seed).",
+  "scripts": {
+    "setup": "npm install --prefix frontend && npm install --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "build": "npm run build --prefix frontend",
+    "start:frontend": "npm run start --prefix frontend",
+    "start:backend": "npm run start --prefix backend",
+    "db:up": "docker compose -f database/docker-compose.yml up -d",
+    "db:down": "docker compose -f database/docker-compose.yml down",
+    "db:migrate": "npm run migrate --prefix backend",
+    "db:seed": "npm run seed --prefix backend",
+    "db:reset": "npm run db:reset --prefix backend"
+  }
+}

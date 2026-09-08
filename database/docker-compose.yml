@@ -1,0 +1,31 @@
+# Local development database.
+#
+#   docker compose -f database/docker-compose.yml up -d      (or: npm run db:up)
+#
+# Unlike the hand-rolled `docker run` this replaces, it has a restart policy,
+# so the database survives a reboot, and a named volume, so data survives the
+# container being recreated.
+#
+# Development only. Production should use a managed MySQL - see docs/deployment.md.
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: surgical-mysql
+    restart: unless-stopped
+    environment:
+      # Override by exporting DB_PASSWORD, or leave the dev default.
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-devpassword}
+      MYSQL_DATABASE: ${DB_NAME:-surgical_store}
+    ports:
+      - "3306:3306"
+    volumes:
+      - surgical-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  surgical-mysql-data:

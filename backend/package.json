@@ -1,0 +1,27 @@
+{
+  "name": "surgical-store-api",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "type": "module",
+  "description": "Express + MySQL API for the surgical equipment store (public catalogue + admin panel).",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "migrate": "node src/migrate.js",
+    "seed": "node src/seed.js",
+    "db:reset": "node src/migrate.js && node src/seed.js --fresh"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.5",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
