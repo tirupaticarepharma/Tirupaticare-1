@@ -15,6 +15,29 @@ function parseJson(value, fallback) {
   }
 }
 
+/**
+ * Where an uploaded photo is served from, or null when the row has none.
+ *
+ * The path is relative so the same database works behind any hostname; the
+ * frontend resolves it against the API origin (see resolveImageUrl in
+ * frontend/src/lib/api.ts).
+ *
+ * `?v=` is the row's updated_at, which lets the endpoint send a one-year
+ * Cache-Control: replacing the photo changes the URL, so browsers pick the new
+ * one up immediately instead of holding a stale copy.
+ *
+ * Expects `image_mime_type IS NOT NULL AS has_image` in the SELECT - never the
+ * blob itself, which would put megabytes into every catalogue response.
+ */
+function uploadedImageUrl(row) {
+  if (!row.has_image) return null;
+
+  const version = row.updated_at ? new Date(row.updated_at).getTime() : NaN;
+  const path = `/api/products/${row.id}/image`;
+
+  return Number.isFinite(version) ? `${path}?v=${version}` : path;
+}
+
 /** Shape sent to the public site. Never includes is_visible. */
 export function toPublicProduct(row) {
   return {
@@ -26,7 +49,9 @@ export function toPublicProduct(row) {
     summary: row.summary ?? null,
     description: row.description ?? null,
     price: row.price == null ? null : Number(row.price),
-    imageUrl: row.image_url ?? null,
+    // A row has either an externally hosted photo or an uploaded one, so the
+    // site only ever needs the single field.
+    imageUrl: row.image_url ?? uploadedImageUrl(row),
     unit: row.unit ?? null,
     art: row.art ?? null,
     specs: parseJson(row.specs, []),
@@ -41,6 +66,9 @@ export function toAdminProduct(row) {
   return {
     ...toPublicProduct(row),
     isVisible: Boolean(row.is_visible),
+    // Lets the form tell "imageUrl is a photo the manager typed" from "imageUrl
+    // is our own endpoint", so the URL box is not filled with an internal path.
+    hasUploadedImage: Boolean(row.has_image),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -62,6 +90,9 @@ export function slugify(value) {
  * Only whitelisted fields are accepted, so a client cannot set `id` or
  * `created_at`. Accepts camelCase (imageUrl) or snake_case (image_url).
  * Returns { columns, values, errors }.
+ *
+ * `imageBase64` is deliberately not here - an upload is not a plain column
+ * value, so admin.js decodes it and appends the image columns itself.
  */
 const FIELDS = [
   { column: "name", keys: ["name"], type: "string", maxLength: 255 },

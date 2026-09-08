@@ -143,7 +143,19 @@ export type ProductPayload = Partial<
     | "slug"
     | "specs"
     | "features"
-  >
+  > & {
+    /**
+     * A photo to store in the database, as a base64 data URL from FileReader.
+     *
+     *   string    replace the stored photo (and clear any Image URL)
+     *   null      remove the stored photo
+     *   omitted   leave the stored photo alone
+     *
+     * Omitting it matters: the list view's Visible and In Stock toggles send a
+     * one-field payload and must not wipe a product's photo.
+     */
+    imageBase64?: string | null;
+  }
 >;
 
 export async function createProduct(

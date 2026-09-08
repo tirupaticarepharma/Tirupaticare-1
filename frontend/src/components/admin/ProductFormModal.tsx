@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { categories } from "@/data/categories";
 import { artKeys } from "@/components/product/ProductArt";
+import { resolveImageUrl } from "@/lib/api";
 import {
   createProduct,
   updateProduct,
@@ -10,6 +11,9 @@ import {
 } from "@/lib/adminApi";
 import type { AdminProduct } from "@/types/product";
 import { CloseIcon } from "@/components/ui/Icons";
+
+/** Kept in step with MAX_IMAGE_BYTES in backend/src/images.js. */
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 /**
  * Add / Edit product dialog for the admin panel.
@@ -36,12 +40,25 @@ export function ProductFormModal({
     unit: product?.unit ?? "",
     summary: product?.summary ?? "",
     description: product?.description ?? "",
-    imageUrl: product?.imageUrl ?? "",
+    // When the photo was uploaded, `imageUrl` is the API's own endpoint - an
+    // internal path with no business being in a box the manager edits.
+    imageUrl: product?.hasUploadedImage ? "" : (product?.imageUrl ?? ""),
     art: product?.art ?? "",
     isVisible: product?.isVisible ?? true,
     inStock: product?.inStock ?? true,
     isFeatured: product?.isFeatured ?? false,
   });
+
+  /**
+   * What to do with the stored photo on save.
+   *   undefined  leave it alone      (editing anything else must not wipe it)
+   *   string     upload this data URL
+   *   null       remove it
+   */
+  const [imageChange, setImageChange] = useState<string | null | undefined>(
+    undefined,
+  );
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
 
   /* Escape closes the dialog. */
@@ -55,6 +72,41 @@ export function ProductFormModal({
 
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((current) => ({ ...current, [key]: value }));
+  }
+
+  function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    // Cancelling the file picker clears the selection but must not be read as
+    // "remove the existing photo".
+    if (!file) {
+      setImageChange(undefined);
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_BYTES) {
+      onError(
+        `That image is ${Math.round(file.size / (1024 * 1024))}MB. Please use one under ${Math.round(MAX_IMAGE_BYTES / (1024 * 1024))}MB.`,
+      );
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") setImageChange(reader.result);
+    };
+    reader.onerror = () => {
+      onError("That file could not be read. Please try another image.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeImage() {
+    setImageChange(null);
+    set("imageUrl", "");
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -80,6 +132,9 @@ export function ProductFormModal({
       isVisible: form.isVisible,
       inStock: form.inStock,
       isFeatured: form.isFeatured,
+      // Absent unless the manager actually touched the photo - the API reads a
+      // missing key as "leave the stored one alone".
+      ...(imageChange !== undefined ? { imageBase64: imageChange } : {}),
     };
 
     setBusy(true);
@@ -100,6 +155,20 @@ export function ProductFormModal({
     "h-10 rounded-lg border border-hairline bg-white px-3 text-sm outline-none transition-colors focus:border-brand-400";
   const labelText =
     "text-xs font-bold uppercase tracking-wide text-ink-500";
+
+  /*
+   * The photo this product will show once saved, matching the API's precedence:
+   * a file just picked wins, then a typed URL, then whatever is already stored.
+   */
+  const typedImage = resolveImageUrl(form.imageUrl);
+  const storedImage = product?.hasUploadedImage
+    ? resolveImageUrl(product.imageUrl)
+    : null;
+
+  let preview: string | null;
+  if (typeof imageChange === "string") preview = imageChange;
+  else if (imageChange === null) preview = typedImage;
+  else preview = typedImage ?? storedImage;
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink-900/50 p-4 backdrop-blur-[2px] sm:p-6">
@@ -209,18 +278,80 @@ export function ProductFormModal({
                 className={field}
               />
             </label>
+          </div>
 
-            <label className="flex flex-col gap-1.5 sm:col-span-2">
-              <span className={labelText}>Image URL</span>
+          {/* ---------------------------------------------------- photo */}
+          <fieldset className="flex flex-col gap-3 rounded-xl border border-hairline p-4">
+            <legend className={`px-1 ${labelText}`}>Photo</legend>
+
+            <div className="flex items-start gap-4">
+              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-hairline bg-surface-muted">
+                {preview ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={preview}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center text-center text-[0.625rem] leading-tight font-semibold text-ink-300">
+                    No photo
+                  </span>
+                )}
+              </div>
+
+              <div className="flex min-w-0 flex-1 flex-col gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
+                  onChange={handleImageUpload}
+                  aria-label="Upload a photo"
+                  className="w-full text-sm text-ink-500 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100"
+                />
+                <p className="text-xs leading-relaxed text-ink-300">
+                  PNG, JPEG, WebP, GIF or AVIF, up to{" "}
+                  {Math.round(MAX_IMAGE_BYTES / (1024 * 1024))}MB. Stored in the
+                  database. Square images look best.
+                </p>
+
+                {preview ? (
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="self-start text-xs font-semibold text-red-600 transition-colors hover:text-red-700"
+                  >
+                    Remove photo
+                  </button>
+                ) : null}
+              </div>
+            </div>
+
+            <label className="flex flex-col gap-1.5">
+              <span className={labelText}>
+                Or link one hosted elsewhere
+              </span>
               <input
                 type="text"
                 value={form.imageUrl}
-                onChange={(event) => set("imageUrl", event.target.value)}
+                onChange={(event) => {
+                  set("imageUrl", event.target.value);
+                  // Typing a URL replaces the stored file, so drop a pending
+                  // upload rather than sending both and hoping.
+                  if (typeof imageChange === "string") {
+                    setImageChange(undefined);
+                    if (fileInputRef.current) fileInputRef.current.value = "";
+                  }
+                }}
                 placeholder="/products/photo.jpg or https://..."
                 className={field}
               />
+              <span className="text-xs text-ink-300">
+                An uploaded photo wins over this. Saving a URL removes the
+                uploaded one.
+              </span>
             </label>
-          </div>
+          </fieldset>
 
           <label className="flex flex-col gap-1.5">
             <span className={labelText}>

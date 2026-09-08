@@ -6,11 +6,35 @@ import { assertConnection } from "./db.js";
 import { publicRouter } from "./routes/products.js";
 import { adminRouter } from "./routes/admin.js";
 import { openapiSpec, swaggerUiOptions } from "./openapi.js";
+import { MAX_IMAGE_BYTES } from "./images.js";
 
 const app = express();
 
 app.disable("x-powered-by");
-app.use(express.json({ limit: "1mb" }));
+
+/*
+ * Two body limits rather than one.
+ *
+ * A product photo is posted as base64 inside the JSON body, which inflates it
+ * by 4/3, so the create/update routes need room for a MAX_IMAGE_BYTES image
+ * plus the rest of the form. Every other route - including the unauthenticated
+ * login endpoint - keeps the small limit, so nobody can make the API buffer
+ * megabytes without signing in first.
+ */
+const parseSmallJson = express.json({ limit: "1mb" });
+const parseUploadJson = express.json({
+  limit: Math.ceil((MAX_IMAGE_BYTES * 4) / 3) + 64 * 1024,
+});
+
+app.use((req, res, next) => {
+  const isProductWrite =
+    (req.method === "POST" || req.method === "PUT") &&
+    req.path.startsWith("/api/admin/products");
+
+  return isProductWrite
+    ? parseUploadJson(req, res, next)
+    : parseSmallJson(req, res, next);
+});
 
 /* Only the configured site origins may call this API from a browser. */
 app.use(
@@ -86,6 +110,33 @@ app.use((error, _req, res, _next) => {
     return res
       .status(503)
       .json({ error: "Database unavailable. Check MySQL and backend/.env." });
+  }
+
+  /* Thrown by express.json() before any route sees the request. Without these
+   * two, an oversized photo or a malformed body reads as "Something went
+   * wrong", which sends you looking in the wrong place. */
+  if (error?.type === "entity.too.large") {
+    return res.status(413).json({
+      error: `That request is too large. Product photos must be ${Math.round(
+        MAX_IMAGE_BYTES / (1024 * 1024),
+      )}MB or smaller.`,
+    });
+  }
+  if (error?.type === "entity.parse.failed") {
+    return res.status(400).json({ error: "The request body is not valid JSON." });
+  }
+
+  /* MySQL refuses a write bigger than max_allowed_packet - 4MB on MySQL 5.7,
+   * which a large photo can exceed even though this API accepted it. */
+  if (
+    error?.code === "ER_NET_PACKET_TOO_LARGE" ||
+    error?.code === "ER_TOO_LONG_STRING" ||
+    /max_allowed_packet/i.test(error?.message ?? "")
+  ) {
+    return res.status(413).json({
+      error:
+        "The database rejected that image for being too large. Use a smaller file, or raise MySQL's max_allowed_packet.",
+    });
   }
 
   res.status(500).json({ error: "Something went wrong." });

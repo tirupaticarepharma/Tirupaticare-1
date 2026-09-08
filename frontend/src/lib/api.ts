@@ -26,6 +26,39 @@ export const API_BASE_URL = (
   "http://localhost:4000"
 ).replace(/\/$/, "");
 
+/**
+ * The API address the BROWSER must use. Distinct from API_BASE_URL, which may
+ * be an internal hostname only the Next.js server can reach.
+ */
+const PUBLIC_API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_URL ??
+  process.env.API_URL ??
+  "http://localhost:4000"
+).replace(/\/$/, "");
+
+/**
+ * Turns a product's `imageUrl` into something an <img> can actually load.
+ *
+ * A photo uploaded through the admin panel is stored in MySQL and served by the
+ * API, and the API reports it as a relative path (`/api/products/12/image`) so
+ * that the same database works behind any hostname. Left as-is that path would
+ * resolve against the Next.js origin, not the API's, and 404 - which is why
+ * this has to run on every product image.
+ *
+ * Everything else is passed through untouched: absolute URLs, and paths like
+ * `/products/photo.jpg` that point at a file in the frontend's own /public.
+ */
+export function resolveImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  return trimmed.startsWith("/api/")
+    ? `${PUBLIC_API_BASE_URL}${trimmed}`
+    : trimmed;
+}
+
 /** True when the last catalogue fetch failed - pages use it to explain why. */
 export type CatalogueResult = {
   products: Product[];

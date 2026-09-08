@@ -12,12 +12,18 @@ import {
   slugify,
   toAdminProduct,
 } from "../serializers.js";
+import { decodeImageDataUrl, InvalidImageError } from "../images.js";
 
 export const adminRouter = Router();
 
+/*
+ * image_data is never selected: the panel only needs to know *whether* there is
+ * a photo, and pulling the blob into every list response would cost megabytes.
+ */
 const ALL_COLUMNS = `id, slug, name, sku, category, summary, description,
   price, image_url, unit, art, specs, features, is_visible, in_stock,
-  is_featured, created_at, updated_at`;
+  is_featured, created_at, updated_at,
+  image_mime_type IS NOT NULL AS has_image`;
 
 /* ---------------------------------------------------------------- auth --- */
 
@@ -100,6 +106,60 @@ async function uniqueSlug(base, excludeId = null) {
   }
 }
 
+/** Overwrites the column if mapBodyToColumns already produced it, else adds it. */
+function setColumn(columns, values, column, value) {
+  const index = columns.indexOf(column);
+  if (index >= 0) {
+    values[index] = value;
+    return;
+  }
+  columns.push(column);
+  values.push(value);
+}
+
+/**
+ * Folds the image half of a request body into the column/value lists.
+ *
+ * A product has an uploaded photo *or* an externally hosted one, never both,
+ * so whichever the manager just supplied clears the other. That is what keeps
+ * `image_url` and `image_data` from disagreeing about which photo is current,
+ * and stops a replaced upload sitting in the table forever.
+ *
+ *   imageBase64: "data:image/png;base64,..."   replace the upload, drop the URL
+ *   imageBase64: null                          remove the upload
+ *   imageBase64 absent                         leave the upload alone
+ *   imageUrl: "https://..."                    use the URL, drop the upload
+ *
+ * "Leave it alone" is the case that matters most: the panel's Visible and In
+ * Stock toggles send a one-field body, and they must not wipe a photo.
+ *
+ * Throws InvalidImageError for a file the manager should replace.
+ */
+function applyImageColumns(body, columns, values) {
+  const upload = body?.imageBase64;
+
+  if (typeof upload === "string" && upload !== "") {
+    const { buffer, mimeType } = decodeImageDataUrl(upload);
+    setColumn(columns, values, "image_data", buffer);
+    setColumn(columns, values, "image_mime_type", mimeType);
+    setColumn(columns, values, "image_url", null);
+    return;
+  }
+
+  // Explicit null is the panel's "Remove image" button.
+  if (body != null && "imageBase64" in body && upload == null) {
+    setColumn(columns, values, "image_data", null);
+    setColumn(columns, values, "image_mime_type", null);
+    return;
+  }
+
+  const urlIndex = columns.indexOf("image_url");
+  if (urlIndex >= 0 && values[urlIndex] !== null) {
+    setColumn(columns, values, "image_data", null);
+    setColumn(columns, values, "image_mime_type", null);
+  }
+}
+
 /** POST /api/admin/products - create. */
 adminRouter.post("/products", requireAdmin, async (req, res, next) => {
   try {
@@ -111,6 +171,15 @@ adminRouter.post("/products", requireAdmin, async (req, res, next) => {
     const { columns, values, errors } = mapBodyToColumns(req.body);
     if (errors.length > 0) {
       return res.status(400).json({ error: errors.join("; ") });
+    }
+
+    try {
+      applyImageColumns(req.body, columns, values);
+    } catch (imageError) {
+      if (imageError instanceof InvalidImageError) {
+        return res.status(400).json({ error: imageError.message });
+      }
+      throw imageError;
     }
 
     // Always store a slug, generated from the name when none was supplied.
@@ -164,6 +233,16 @@ adminRouter.put("/products/:id", requireAdmin, async (req, res, next) => {
     if (errors.length > 0) {
       return res.status(400).json({ error: errors.join("; ") });
     }
+
+    try {
+      applyImageColumns(req.body, columns, values);
+    } catch (imageError) {
+      if (imageError instanceof InvalidImageError) {
+        return res.status(400).json({ error: imageError.message });
+      }
+      throw imageError;
+    }
+
     if (columns.length === 0) {
       return res.status(400).json({ error: "No updatable fields supplied." });
     }

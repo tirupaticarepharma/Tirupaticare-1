@@ -1,4 +1,5 @@
 import type { Product } from "@/types/product";
+import { resolveImageUrl } from "@/lib/api";
 
 /**
  * ============================================================================
@@ -7,9 +8,10 @@ import type { Product } from "@/types/product";
  *  Clean line illustrations drawn inline as SVG - no photo files, no external
  *  requests, no layout shift, and they stay sharp at any size.
  *
- *  TO USE REAL PHOTOS INSTEAD: set a product's Image URL in the admin panel
- *  (either an absolute URL, or a path like /products/my-photo.jpg pointing at
- *  a file in /public). The photo is then rendered instead of the glyph.
+ *  TO USE REAL PHOTOS INSTEAD: upload one on the product in the admin panel
+ *  (stored in MySQL, served by the API), or set its Image URL to an absolute
+ *  address or a path like /products/my-photo.jpg pointing at a file in
+ *  /public. Either way the photo is rendered here instead of the glyph.
  * ============================================================================
  */
 
@@ -285,12 +287,15 @@ export function ProductArt({
   size?: "card" | "detail" | "thumb";
   className?: string;
 }) {
-  // Real photo supplied? Use it and skip the illustration entirely.
-  if (product.imageUrl) {
+  // Real photo supplied? Use it and skip the illustration entirely. An uploaded
+  // photo comes back as a path on the API, so it has to be resolved first.
+  const photo = resolveImageUrl(product.imageUrl);
+
+  if (photo) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={product.imageUrl}
+        src={photo}
         alt={product.name}
         loading="lazy"
         decoding="async"

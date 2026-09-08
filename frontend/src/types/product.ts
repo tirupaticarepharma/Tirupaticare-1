@@ -18,6 +18,11 @@ export type Product = {
   description: string | null;
   /** null means "price on request" */
   price: number | null;
+  /**
+   * An absolute URL, a path in the frontend's /public, or a path on the API
+   * (`/api/products/12/image`) for a photo uploaded through the admin panel.
+   * Always pass it through `resolveImageUrl` before putting it in an <img>.
+   */
   imageUrl: string | null;
   unit: string | null;
   /** Placeholder illustration key - see components/product/ProductArt.tsx */
@@ -31,6 +36,12 @@ export type Product = {
 /** Everything above plus the fields only the admin panel sees. */
 export type AdminProduct = Product & {
   isVisible: boolean;
+  /**
+   * True when `imageUrl` is the API's own image endpoint rather than an address
+   * the manager typed. The edit form uses it to keep the Image URL box empty
+   * instead of showing an internal path.
+   */
+  hasUploadedImage?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
