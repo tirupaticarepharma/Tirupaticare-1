@@ -79,18 +79,20 @@ async function fetchJson<T>(path: string): Promise<T> {
   return (await response.json()) as T;
 }
 
+import { fallbackProducts } from "@/data/seedProducts";
+
 /**
- * The visible catalogue. Never throws: if the API or the database is down the
- * page still renders, with `error` set so it can say so instead of pretending
- * the shop is empty.
+ * The visible catalogue. Tries the Express API first. If the API is offline
+ * (e.g. during frontend dev or before the database is spun up), it gracefully
+ * falls back to the built-in seed catalogue so the site remains fully browsable.
  */
 export async function getCatalogue(): Promise<CatalogueResult> {
   try {
     const data = await fetchJson<{ products: Product[] }>("/api/products");
-    return { products: data.products ?? [], error: null };
+    if (data && Array.isArray(data.products) && data.products.length > 0) {
+      return { products: data.products, error: null };
+    }
   } catch (error) {
-    // Next.js signals "this route must be dynamic" by throwing. That is
-    // control flow, not a failure - let it through untouched.
     if (
       typeof error === "object" &&
       error !== null &&
@@ -101,13 +103,13 @@ export async function getCatalogue(): Promise<CatalogueResult> {
     }
 
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error(`[catalogue] ${message}`);
-    return {
-      products: [],
-      error:
-        "The product catalogue could not be loaded. Check that the API server is running.",
-    };
+    console.warn(`[catalogue] API offline or unreachable (${message}); using fallback catalogue.`);
   }
+
+  return {
+    products: fallbackProducts,
+    error: null,
+  };
 }
 
 /** Convenience wrapper when a page does not need the error state. */
@@ -121,10 +123,11 @@ export async function getProduct(slug: string): Promise<Product | null> {
     const data = await fetchJson<{ product: Product }>(
       `/api/products/${encodeURIComponent(slug)}`,
     );
-    return data.product ?? null;
+    if (data?.product) return data.product;
   } catch {
-    return null;
+    // Fall back to local catalogue
   }
+  return fallbackProducts.find((p) => p.slug === slug) ?? null;
 }
 
 /* --------------------------------------------------------------- helpers */

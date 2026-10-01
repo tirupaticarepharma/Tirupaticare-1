@@ -2,7 +2,7 @@
 
 import { MinusIcon, PlusIcon } from "@/components/ui/Icons";
 
-/** Minus / number / plus control used on the product page and in the cart. */
+/** Minus / numeric value / plus stepper control used on product pages and in the cart. */
 export function QuantityStepper({
   value,
   onChange,
@@ -20,8 +20,8 @@ export function QuantityStepper({
 }) {
   const dimensions =
     size === "sm"
-      ? { button: "h-8 w-8", field: "w-9 text-sm", icon: "text-xs" }
-      : { button: "h-11 w-11", field: "w-12 text-base", icon: "text-sm" };
+      ? { button: "h-8 w-8", field: "w-10 text-xs sm:text-sm", icon: "text-xs" }
+      : { button: "h-10 w-10 sm:h-11 sm:w-11", field: "w-12 text-sm sm:text-base", icon: "text-sm" };
 
   function clamp(next: number) {
     if (Number.isNaN(next)) return min;
@@ -30,7 +30,7 @@ export function QuantityStepper({
 
   return (
     <div
-      className="inline-flex items-center rounded-xl border border-hairline bg-white"
+      className="inline-flex items-center rounded-xl border border-slate-200/90 bg-white shadow-2xs"
       role="group"
       aria-label={label}
     >
@@ -39,7 +39,7 @@ export function QuantityStepper({
         onClick={() => onChange(clamp(value - 1))}
         disabled={value <= min}
         aria-label="Decrease quantity"
-        className={`${dimensions.button} flex items-center justify-center rounded-l-xl text-ink-700 transition-colors hover:bg-brand-50 disabled:opacity-35 disabled:hover:bg-transparent`}
+        className={`${dimensions.button} flex items-center justify-center rounded-l-xl text-ink-700 transition-colors hover:bg-brand-50 active:bg-brand-100 disabled:opacity-30 disabled:hover:bg-transparent`}
       >
         <MinusIcon className={dimensions.icon} />
       </button>
@@ -52,7 +52,7 @@ export function QuantityStepper({
         max={max}
         aria-label={label}
         onChange={(event) => onChange(clamp(parseInt(event.target.value, 10)))}
-        className={`${dimensions.field} [appearance:textfield] border-x border-hairline bg-transparent py-1.5 text-center font-semibold tabular-nums outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+        className={`${dimensions.field} [appearance:textfield] border-x border-slate-200/90 bg-slate-50/50 py-1 text-center font-bold tabular-nums text-ink-900 outline-none focus:bg-white [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
       />
 
       <button
@@ -60,7 +60,7 @@ export function QuantityStepper({
         onClick={() => onChange(clamp(value + 1))}
         disabled={value >= max}
         aria-label="Increase quantity"
-        className={`${dimensions.button} flex items-center justify-center rounded-r-xl text-ink-700 transition-colors hover:bg-brand-50 disabled:opacity-35 disabled:hover:bg-transparent`}
+        className={`${dimensions.button} flex items-center justify-center rounded-r-xl text-ink-700 transition-colors hover:bg-brand-50 active:bg-brand-100 disabled:opacity-30 disabled:hover:bg-transparent`}
       >
         <PlusIcon className={dimensions.icon} />
       </button>

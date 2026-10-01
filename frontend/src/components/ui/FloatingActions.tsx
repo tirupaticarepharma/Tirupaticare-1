@@ -3,53 +3,71 @@
 import { useEffect, useState } from "react";
 import { siteConfig } from "@/config/site";
 import { generalInquiryMessage, whatsappLink } from "@/lib/whatsapp";
-import { PhoneIcon, WhatsAppIcon } from "@/components/ui/Icons";
+import { PhoneIcon, WhatsAppIcon, ZapIcon } from "@/components/ui/Icons";
 
 /**
- * Floating contact stack, fixed bottom-right on EVERY page:
- *   - phone (brand teal)
- *   - WhatsApp (the standard green, always the largest target)
- *
- * On pointer devices the WhatsApp button expands to show a label on hover;
- * on touch devices it stays a compact circle so it never covers content.
+ * Floating medical concierge stack, fixed bottom-right on EVERY page:
+ *   - Quick Call button (clinical teal)
+ *   - Direct WhatsApp button (high-contrast WhatsApp green with subtle pulse)
+ *   - Live availability badge
  */
 export function FloatingActions() {
   const [mounted, setMounted] = useState(false);
 
-  // Fade in after mount so the buttons never flash in during hydration.
   useEffect(() => setMounted(true), []);
 
-  return (
-    <div
-      className={`fixed right-4 bottom-4 z-40 flex flex-col items-end gap-3 transition-opacity duration-500 sm:right-6 sm:bottom-6 ${
-        mounted ? "opacity-100" : "opacity-0"
-      }`}
-    >
-      <a
-        href={`tel:${siteConfig.phoneHref}`}
-        aria-label={`Call us on ${siteConfig.phoneDisplay}`}
-        title={`Call ${siteConfig.phoneDisplay}`}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-800 text-white shadow-lg shadow-brand-950/25 ring-1 ring-white/15 transition-transform duration-200 hover:scale-105 hover:bg-brand-900 active:scale-95"
-      >
-        <PhoneIcon className="text-xl" />
-      </a>
+  if (!mounted) return null;
 
-      <a
-        href={whatsappLink(generalInquiryMessage)}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat with us on WhatsApp"
-        title="Chat on WhatsApp"
-        className="group relative flex h-14 items-center gap-0 overflow-hidden rounded-full bg-whatsapp pl-[0.9375rem] text-white shadow-xl shadow-whatsapp-dark/30 ring-1 ring-black/5 transition-all duration-300 hover:bg-whatsapp-dark active:scale-95 sm:hover:gap-2.5"
-      >
-        {/* Soft pulse to draw the eye without being loud about it. */}
-        <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-whatsapp/40 [animation-duration:2.8s]" />
-        <WhatsAppIcon className="shrink-0 text-2xl" />
-        <span className="max-w-0 overflow-hidden text-[0.9375rem] font-semibold whitespace-nowrap opacity-0 transition-all duration-300 sm:group-hover:max-w-40 sm:group-hover:pr-5 sm:group-hover:opacity-100">
-          Chat on WhatsApp
+  return (
+    <aside
+      aria-label="Quick contact shortcuts"
+      className="fixed right-4 bottom-4 z-40 flex flex-col items-end gap-2.5 sm:right-6 sm:bottom-6"
+    >
+      {/* Live availability pill badge (desktop only) */}
+      <div className="hidden items-center gap-1.5 rounded-full border border-emerald-500/20 bg-white/95 px-3 py-1 shadow-md shadow-ink-900/5 backdrop-blur-md sm:flex">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
         </span>
-        <span className="w-[0.9375rem] shrink-0 sm:group-hover:w-0" />
-      </a>
-    </div>
+        <span className="text-[0.6875rem] font-bold tracking-tight text-ink-700">
+          WhatsApp Desk Online
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2.5">
+        {/* Direct Call Button */}
+        <a
+          href={`tel:${siteConfig.phoneHref}`}
+          aria-label={`Call us directly at ${siteConfig.phoneDisplay}`}
+          title={`Call ${siteConfig.phoneDisplay}`}
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-800 text-white shadow-lg shadow-brand-950/20 ring-1 ring-white/20 transition-all duration-200 hover:scale-105 hover:bg-brand-700 active:scale-95"
+        >
+          <PhoneIcon className="text-xl" />
+        </a>
+
+        {/* Primary WhatsApp Action */}
+        <a
+          href={whatsappLink(generalInquiryMessage)}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Direct WhatsApp inquiry with surgical desk"
+          title="Direct WhatsApp inquiry"
+          className="group relative flex h-13 items-center gap-2 overflow-hidden rounded-full bg-linear-to-r from-whatsapp to-whatsapp-dark px-3.5 text-white shadow-xl shadow-whatsapp-dark/35 ring-1 ring-white/25 transition-all duration-300 hover:scale-[1.02] hover:shadow-whatsapp-dark/45 active:scale-95 sm:px-4"
+        >
+          <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
+            <WhatsAppIcon className="text-xl" />
+          </span>
+          <div className="flex flex-col text-left leading-tight pr-1">
+            <span className="text-[0.6875rem] font-medium text-emerald-100 flex items-center gap-1">
+              <ZapIcon className="text-[0.8em]" />
+              Fast Reply
+            </span>
+            <span className="text-xs sm:text-sm font-bold tracking-tight">
+              Inquire on WhatsApp
+            </span>
+          </div>
+        </a>
+      </div>
+    </aside>
   );
 }
