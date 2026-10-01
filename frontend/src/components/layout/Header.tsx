@@ -19,9 +19,9 @@ import {
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/products", label: "Catalogue" },
+  { href: "/products", label: "Products" },
   { href: "/about", label: "About Us" },
-  { href: "/contact", label: "Contact & Location" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function Header() {
@@ -119,24 +119,24 @@ export function Header() {
           </Link>
 
           {/* Desktop navigation */}
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main Navigation">
+          <nav className="hidden items-center gap-1.5 lg:flex" aria-label="Main Navigation">
             {navLinks.map((link) => {
               const active = isActive(link.href);
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`relative rounded-xl px-3.5 py-2 text-sm font-semibold transition-all duration-200 ${
+                  className={`relative rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                     active
-                      ? "bg-brand-50 text-brand-800 shadow-2xs font-bold"
-                      : "text-ink-700 hover:bg-surface-muted hover:text-ink-900"
+                      ? "bg-brand-50 text-brand-800 shadow-2xs font-bold border border-brand-200/60"
+                      : "text-ink-700 hover:bg-surface-muted hover:text-ink-900 border border-transparent"
                   }`}
                 >
                   {link.label}
                   {active && (
                     <span
                       aria-hidden="true"
-                      className="absolute inset-x-3 -bottom-3.5 h-0.5 rounded-full bg-brand-600 hidden"
+                      className="absolute inset-x-3 -bottom-[15px] h-[2px] rounded-full bg-brand-600 block"
                     />
                   )}
                 </Link>
@@ -178,7 +178,7 @@ export function Header() {
       {/* ---------------------------------------------------- mobile menu */}
       <div
         className={`overflow-hidden border-b border-hairline bg-white/98 backdrop-blur-lg transition-all duration-300 lg:hidden ${
-          menuOpen ? "max-h-[22rem] opacity-100 shadow-xl" : "max-h-0 opacity-0 pointer-events-none"
+          menuOpen ? "max-h-[26rem] opacity-100 shadow-xl" : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
         <Container className="flex flex-col gap-1 py-4">
@@ -188,19 +188,33 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => setMenuOpen(false)}
                 className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
                   active
-                    ? "bg-brand-50 text-brand-800 font-bold"
-                    : "text-ink-700 hover:bg-surface-muted"
+                    ? "bg-brand-50 text-brand-800 font-bold border border-brand-200/60"
+                    : "text-ink-700 hover:bg-surface-muted border border-transparent"
                 }`}
               >
                 <span>{link.label}</span>
                 {active && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-brand-600" />
+                  <span className="h-2 w-2 rounded-full bg-brand-600" />
                 )}
               </Link>
             );
           })}
+
+          <Link
+            href="/cart"
+            onClick={() => setMenuOpen(false)}
+            className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
+              isActive("/cart")
+                ? "bg-brand-50 text-brand-800 font-bold border border-brand-200/60"
+                : "text-ink-700 hover:bg-surface-muted border border-transparent"
+            }`}
+          >
+            <span>Inquiry Cart</span>
+            <span className="text-xs font-semibold text-brand-700">View &rarr;</span>
+          </Link>
 
           <div className="mt-3 grid grid-cols-2 gap-2 border-t border-hairline pt-3">
             <a
