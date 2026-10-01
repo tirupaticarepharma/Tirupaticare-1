@@ -13,6 +13,33 @@ type Filter = string;
 
 const validCategoryIds = new Set(categories.map((category) => category.id));
 
+const categoryAliases: Record<string, string> = {
+  surgical: "surgical-instruments",
+  surgicals: "surgical-instruments",
+  instruments: "surgical-instruments",
+  "surgical-instrument": "surgical-instruments",
+  disposable: "disposables",
+  consumables: "disposables",
+  diagnostic: "diagnostic-equipment",
+  diagnostics: "diagnostic-equipment",
+  equipment: "diagnostic-equipment",
+  orthopedic: "orthopedic-implants",
+  ortho: "orthopedic-implants",
+  implants: "orthopedic-implants",
+  furniture: "hospital-furniture",
+  hospital: "hospital-furniture",
+  safety: "ppe",
+  masks: "ppe",
+};
+
+function resolveCategory(param: string | null): string {
+  if (!param) return "all";
+  const cleaned = param.trim().toLowerCase();
+  if (validCategoryIds.has(cleaned)) return cleaned;
+  if (categoryAliases[cleaned]) return categoryAliases[cleaned];
+  return "all";
+}
+
 export function ProductBrowser({
   products,
   error = null,
@@ -25,8 +52,7 @@ export function ProductBrowser({
   const searchParams = useSearchParams();
 
   const categoryParam = searchParams.get("category");
-  const initialFilter: Filter =
-    categoryParam && validCategoryIds.has(categoryParam) ? categoryParam : "all";
+  const initialFilter: Filter = resolveCategory(categoryParam);
 
   const [filter, setFilter] = useState<Filter>(initialFilter);
   const [query, setQuery] = useState("");
