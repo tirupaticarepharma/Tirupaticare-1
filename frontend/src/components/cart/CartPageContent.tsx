@@ -14,66 +14,68 @@ import {
 import {
   ArrowRightIcon,
   CartIcon,
+  FileTextIcon,
   PhoneIcon,
+  ShieldCheckIcon,
   TrashIcon,
+  ZapIcon,
 } from "@/components/ui/Icons";
 
 export function CartPageContent() {
   const { items, itemCount, hydrated, setQuantity, removeItem, clearCart } =
     useCart();
 
-  /* Nothing is rendered from localStorage until it has been read on the
-     client, so the server and first client render always agree. */
+  /* Client hydration skeleton */
   if (!hydrated) {
     return (
       <Container className="py-8 sm:py-12">
-        <span className="sr-only">Loading your inquiry list</span>
+        <span className="sr-only">Loading procurement list</span>
         <div
           aria-hidden="true"
           className="grid animate-pulse gap-8 lg:grid-cols-[1fr_22rem] lg:gap-10"
         >
           <div className="flex flex-col gap-5">
             {[0, 1].map((row) => (
-              <div key={row} className="flex gap-4">
-                <div className="h-24 w-24 shrink-0 rounded-xl bg-surface-muted sm:h-28 sm:w-28" />
+              <div key={row} className="flex gap-4 p-4 rounded-2xl border border-hairline bg-white">
+                <div className="h-24 w-24 shrink-0 rounded-xl bg-slate-100 sm:h-28 sm:w-28" />
                 <div className="flex flex-1 flex-col gap-2.5 py-1">
-                  <div className="h-4 w-2/3 rounded bg-surface-muted" />
-                  <div className="h-3 w-1/3 rounded bg-surface-muted" />
-                  <div className="mt-auto h-10 w-32 rounded-xl bg-surface-muted" />
+                  <div className="h-4 w-2/3 rounded bg-slate-100" />
+                  <div className="h-3 w-1/3 rounded bg-slate-100" />
+                  <div className="mt-auto h-10 w-32 rounded-xl bg-slate-100" />
                 </div>
               </div>
             ))}
           </div>
-          <div className="h-72 rounded-2xl bg-surface-muted" />
+          <div className="h-72 rounded-2xl bg-slate-100" />
         </div>
       </Container>
     );
   }
 
+  /* Empty state */
   if (items.length === 0) {
     return (
       <Container className="py-16 sm:py-24">
         <div className="mx-auto flex max-w-md flex-col items-center gap-5 text-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-50 text-3xl text-brand-600">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-brand-50 text-3xl text-brand-700 shadow-xs">
             <CartIcon />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-ink-900">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight">
               Your inquiry list is empty
             </h1>
-            <p className="mt-2 leading-relaxed text-ink-500">
-              Add the products you need and we&rsquo;ll turn the list into a
-              WhatsApp message, ready for you to send.
+            <p className="mt-2 text-sm sm:text-base leading-relaxed text-ink-500 font-normal">
+              Select surgical instruments, implants, or hospital supplies from our catalogue to generate a formal WhatsApp quotation.
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="mt-2 flex flex-col gap-3 sm:flex-row">
             <Button href="/products" size="lg">
-              Browse Products
-              <ArrowRightIcon className="text-[1.1em]" />
+              Browse Catalogue
+              <ArrowRightIcon className="text-base" />
             </Button>
             <Button href={`tel:${siteConfig.phoneHref}`} variant="outline" size="lg">
               <PhoneIcon className="text-[1.05em]" />
-              Call Now
+              Call Sales Desk
             </Button>
           </div>
         </div>
@@ -83,32 +85,49 @@ export function CartPageContent() {
 
   return (
     <Container className="py-8 sm:py-12">
-      <div className="grid gap-8 lg:grid-cols-[1fr_22rem] lg:items-start lg:gap-10">
+      {/* Page Header */}
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between pb-6 border-b border-hairline">
+        <div>
+          <span className="text-xs font-bold uppercase tracking-wider text-brand-600">
+            Procurement Desk
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-ink-900 tracking-tight">
+            Surgical Inquiry Sheet
+          </h1>
+        </div>
+
+        <p className="text-xs sm:text-sm text-ink-500">
+          <span className="font-bold text-ink-900">{itemCount}</span> items &bull;{" "}
+          <span className="font-bold text-ink-900">{items.length}</span> unique products
+        </p>
+      </div>
+
+      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_24rem] lg:items-start lg:gap-10">
         {/* ------------------------------------------------------ line items */}
         <div>
-          <div className="flex items-center justify-between gap-4 border-b border-hairline pb-4">
-            <p className="text-sm text-ink-500">
-              <span className="font-semibold text-ink-900">{itemCount}</span>{" "}
-              item{itemCount === 1 ? "" : "s"} across{" "}
-              <span className="font-semibold text-ink-900">{items.length}</span>{" "}
-              product{items.length === 1 ? "" : "s"}
-            </p>
+          <div className="flex items-center justify-between gap-4 pb-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-ink-400">
+              Selected Instruments &amp; Supplies
+            </span>
             <button
               type="button"
               onClick={clearCart}
-              className="text-sm font-medium text-ink-300 transition-colors hover:text-red-600"
+              className="text-xs font-semibold text-ink-400 transition-colors hover:text-red-600"
             >
-              Clear list
+              Clear entire list
             </button>
           </div>
 
-          <ul className="flex flex-col divide-y divide-hairline">
+          <ul className="flex flex-col gap-3">
             {items.map((line) => {
               return (
-                <li key={line.slug} className="flex gap-4 py-5">
+                <li
+                  key={line.slug}
+                  className="flex gap-4 p-4 sm:p-5 rounded-2xl border border-slate-200/90 bg-white shadow-xs transition-colors hover:border-brand-200"
+                >
                   <Link
                     href={`/products/${line.slug}`}
-                    className="h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-hairline sm:h-28 sm:w-28"
+                    className="h-20 w-20 sm:h-24 sm:w-24 shrink-0 overflow-hidden rounded-xl border border-slate-200/80 bg-surface-muted"
                   >
                     <ProductArt
                       product={{
@@ -120,37 +139,40 @@ export function CartPageContent() {
                     />
                   </Link>
 
-                  <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
+                  <div className="flex min-w-0 flex-1 flex-col justify-between gap-2.5">
                     <div>
                       <Link
                         href={`/products/${line.slug}`}
-                        className="font-bold text-ink-900 transition-colors hover:text-brand-700"
+                        className="font-bold text-ink-900 text-sm sm:text-base transition-colors hover:text-brand-700 leading-snug"
                       >
                         {line.name}
                       </Link>
-                      <p className="mt-1 text-sm text-ink-500">
-                        {line.sku ? `SKU ${line.sku}` : null}
-                        {line.sku && line.unit ? " · " : null}
-                        {line.unit}
-                      </p>
-                      <p className="mt-1 text-xs text-ink-300">
-                        Price on request
-                      </p>
+                      <div className="mt-1 flex items-center gap-2 text-xs text-ink-500">
+                        {line.sku ? (
+                          <span className="font-mono font-semibold text-brand-700">
+                            {line.sku}
+                          </span>
+                        ) : null}
+                        {line.sku && line.unit ? <span>&bull;</span> : null}
+                        <span>{line.unit ?? "Per piece"}</span>
+                      </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-hairline/60">
                       <QuantityStepper
+                        size="sm"
                         value={line.quantity}
                         onChange={(next) => setQuantity(line.slug, next)}
                         label={`Quantity for ${line.name}`}
                       />
+
                       <button
                         type="button"
                         onClick={() => removeItem(line.slug)}
-                        className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-ink-500 transition-colors hover:bg-red-50 hover:text-red-600"
+                        className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-ink-400 transition-colors hover:bg-red-50 hover:text-red-600"
                       >
-                        <TrashIcon className="text-base" />
-                        Remove
+                        <TrashIcon className="text-sm" />
+                        <span>Remove</span>
                       </button>
                     </div>
                   </div>
@@ -159,49 +181,55 @@ export function CartPageContent() {
             })}
           </ul>
 
-          <div className="pt-4">
+          <div className="mt-6">
             <Link
               href="/products"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 transition-colors hover:text-brand-900"
+              className="inline-flex items-center gap-2 text-sm font-bold text-brand-700 transition-colors hover:text-brand-900"
             >
-              Continue browsing
-              <ArrowRightIcon className="text-[1.05em]" />
+              <span>&larr; Add more products from catalogue</span>
             </Link>
           </div>
         </div>
 
-        {/* --------------------------------------------------------- summary */}
+        {/* --------------------------------------------------------- summary sidebar */}
         <aside className="lg:sticky lg:top-32">
-          <div className="rounded-2xl border border-hairline bg-surface-muted/60 p-5 sm:p-6">
-            <h2 className="text-lg font-bold text-ink-900">Inquiry summary</h2>
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-sm">
+            <div className="flex items-center gap-2 pb-3 border-b border-hairline">
+              <FileTextIcon className="text-lg text-brand-700" />
+              <h2 className="text-base font-bold text-ink-900">
+                Procurement Summary
+              </h2>
+            </div>
 
-            <dl className="mt-4 flex flex-col gap-2.5 border-y border-hairline py-4 text-sm">
+            <dl className="mt-4 flex flex-col gap-3 text-sm">
               <div className="flex justify-between gap-4">
-                <dt className="text-ink-500">Products</dt>
-                <dd className="font-semibold text-ink-900 tabular-nums">
+                <dt className="text-ink-500 font-medium">Distinct Products</dt>
+                <dd className="font-bold text-ink-900 tabular-nums">
                   {items.length}
                 </dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-ink-500">Total quantity</dt>
-                <dd className="font-semibold text-ink-900 tabular-nums">
-                  {itemCount}
+                <dt className="text-ink-500 font-medium">Total Quantity</dt>
+                <dd className="font-bold text-ink-900 tabular-nums">
+                  {itemCount} units
                 </dd>
               </div>
-              <div className="flex justify-between gap-4">
-                <dt className="text-ink-500">Pricing</dt>
-                <dd className="font-semibold text-ink-900">On request</dd>
+              <div className="flex justify-between gap-4 pt-2 border-t border-hairline">
+                <dt className="text-ink-500 font-medium">Pricing Status</dt>
+                <dd className="font-bold text-brand-800">Verified via WhatsApp</dd>
               </div>
             </dl>
 
-            <p className="mt-4 text-xs leading-relaxed text-ink-500">
-              This is an inquiry, not an order. There is no payment step on this
-              site &mdash; we&rsquo;ll confirm pricing &amp; availability over
-              WhatsApp before anything is dispatched.
-            </p>
+            <div className="mt-4 rounded-xl bg-brand-50/80 p-3 text-xs leading-relaxed text-brand-800 border border-brand-200/60">
+              <div className="flex items-center gap-1.5 font-bold mb-1">
+                <ShieldCheckIcon className="text-sm text-brand-600" />
+                <span>Institutional Quotation Process</span>
+              </div>
+              No payment is processed online. When you send this RFQ, our sales desk verifies warehouse stock, applies institutional rate tiers, and replies with an official quotation.
+            </div>
 
-            <div className="mt-4 flex flex-col gap-2.5">
-              <SendInquiryButton />
+            <div className="mt-5 flex flex-col gap-2.5">
+              <SendInquiryButton size="lg" />
               <Button
                 href={`tel:${siteConfig.phoneHref}`}
                 variant="outline"
@@ -209,7 +237,7 @@ export function CartPageContent() {
                 fullWidth
               >
                 <PhoneIcon className="text-[1.05em]" />
-                Call {siteConfig.phoneDisplay}
+                Call Sales Desk ({siteConfig.phoneDisplay})
               </Button>
             </div>
 
@@ -217,11 +245,6 @@ export function CartPageContent() {
               <InquiryMessagePreview />
             </div>
           </div>
-
-          <p className="mt-4 px-1 text-xs leading-relaxed text-ink-300">
-            Your list is saved in this browser only. It is not sent anywhere
-            until you press the WhatsApp button.
-          </p>
         </aside>
       </div>
     </Container>

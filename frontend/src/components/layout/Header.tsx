@@ -14,13 +14,14 @@ import {
   MenuIcon,
   PhoneIcon,
   WhatsAppIcon,
+  ZapIcon,
 } from "@/components/ui/Icons";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/products", label: "Products" },
+  { href: "/products", label: "Catalogue" },
   { href: "/about", label: "About Us" },
-  { href: "/contact", label: "Contact" },
+  { href: "/contact", label: "Contact & Location" },
 ];
 
 export function Header() {
@@ -28,7 +29,6 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  /* Subtle shadow once the page moves, so the header separates from content. */
   useEffect(() => {
     function onScroll() {
       setScrolled(window.scrollY > 8);
@@ -38,7 +38,6 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* Close the mobile menu whenever the route changes. */
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
@@ -50,32 +49,39 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-30">
-      {/* ------------------------------------------------------- top bar */}
-      <div className="bg-brand-900 text-brand-100">
-        <Container className="flex h-9 items-center justify-between gap-4 text-xs sm:text-[0.8125rem]">
-          <p className="hidden truncate sm:block">
-            Trusted supplier to hospitals, clinics &amp; doctors &mdash;{" "}
-            <span className="text-white">
-              same-day dispatch on stocked items
-            </span>
-          </p>
+      {/* ------------------------------------------------------- top notice strip */}
+      <div className="bg-brand-950 text-brand-100 border-b border-white/5">
+        <Container className="flex h-9 items-center justify-between gap-4 text-xs">
+          <div className="hidden items-center gap-2 truncate sm:flex">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <p className="truncate text-brand-200">
+              Direct supplier to hospitals &amp; clinics &mdash;{" "}
+              <span className="font-semibold text-white">
+                Same-day dispatch on stocked instruments
+              </span>
+            </p>
+          </div>
 
           <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:justify-end">
             <a
               href={`tel:${siteConfig.phoneHref}`}
               className="flex items-center gap-1.5 font-semibold text-white transition-colors hover:text-brand-200"
             >
-              <PhoneIcon className="text-[0.95em]" />
-              {siteConfig.phoneDisplay}
+              <PhoneIcon className="text-[0.95em] text-brand-300" />
+              <span>{siteConfig.phoneDisplay}</span>
             </a>
+
+            <span className="hidden text-brand-800 sm:inline" aria-hidden="true">|</span>
 
             <a
               href={`mailto:${siteConfig.email}`}
-              className="hidden items-center gap-1.5 transition-colors hover:text-white md:flex"
+              className="hidden items-center gap-1.5 text-brand-200 transition-colors hover:text-white md:flex"
             >
-              <MailIcon className="text-[0.95em]" />
-              {siteConfig.email}
+              <MailIcon className="text-[0.95em] text-brand-300" />
+              <span>{siteConfig.email}</span>
             </a>
+
+            <span className="text-brand-800" aria-hidden="true">|</span>
 
             <a
               href={whatsappLink(generalInquiryMessage)}
@@ -83,60 +89,71 @@ export function Header() {
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 font-semibold text-whatsapp transition-colors hover:text-white"
             >
-              <WhatsAppIcon className="text-[1.05em]" />
-              WhatsApp
+              <WhatsAppIcon className="text-[1.1em]" />
+              <span>WhatsApp Desk</span>
             </a>
           </div>
         </Container>
       </div>
 
-      {/* ------------------------------------------------------- main bar */}
+      {/* ------------------------------------------------------- main nav bar */}
       <div
-        className={`border-b border-hairline bg-white/95 backdrop-blur transition-shadow duration-300 ${
-          scrolled ? "shadow-sm shadow-ink-900/5" : ""
+        className={`border-b border-hairline bg-white/92 backdrop-blur-md transition-all duration-300 ${
+          scrolled ? "shadow-sm shadow-ink-900/5 bg-white/98" : ""
         }`}
       >
-        <Container className="flex h-16 items-center justify-between gap-4 sm:h-18">
-          {/* Logo */}
-          <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <LogoMark className="text-[2.25rem] text-brand-700" />
-            <span className="flex flex-col leading-none">
-              <span className="font-display text-[1.0625rem] font-bold tracking-tight text-ink-900 sm:text-lg">
+        <Container className="flex h-16 sm:h-18 items-center justify-between gap-4">
+          {/* Logo brand */}
+          <Link href="/" className="group flex shrink-0 items-center gap-3">
+            <div className="transition-transform duration-200 group-hover:scale-105">
+              <LogoMark className="text-[2.25rem] text-brand-700" />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="font-display text-lg sm:text-xl font-extrabold tracking-tight text-ink-900 group-hover:text-brand-800 transition-colors">
                 {siteConfig.name}
               </span>
-              <span className="mt-1 hidden text-[0.6875rem] font-medium tracking-wide text-ink-500 uppercase sm:block">
+              <span className="mt-1 hidden text-[0.6875rem] font-bold tracking-wider text-brand-600 uppercase sm:block">
                 {siteConfig.tagline}
               </span>
-            </span>
+            </div>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 lg:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`rounded-lg px-3.5 py-2 text-[0.9375rem] font-semibold transition-colors ${
-                  isActive(link.href)
-                    ? "bg-brand-50 text-brand-800"
-                    : "text-ink-700 hover:bg-surface-muted hover:text-ink-900"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+          {/* Desktop navigation */}
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main Navigation">
+            {navLinks.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative rounded-xl px-3.5 py-2 text-sm font-semibold transition-all duration-200 ${
+                    active
+                      ? "bg-brand-50 text-brand-800 shadow-2xs font-bold"
+                      : "text-ink-700 hover:bg-surface-muted hover:text-ink-900"
+                  }`}
+                >
+                  {link.label}
+                  {active && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-x-3 -bottom-3.5 h-0.5 rounded-full bg-brand-600 hidden"
+                    />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2">
+          {/* Action buttons */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
             <a
               href={whatsappLink(generalInquiryMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden h-11 items-center gap-2 rounded-xl bg-whatsapp px-4 text-sm font-semibold text-white shadow-sm shadow-whatsapp-dark/30 transition-colors hover:bg-whatsapp-dark md:flex"
+              className="hidden h-10 sm:h-11 items-center gap-2 rounded-xl bg-linear-to-b from-whatsapp to-whatsapp-dark px-3.5 sm:px-4 text-xs sm:text-sm font-bold text-white shadow-xs shadow-whatsapp-dark/25 transition-all duration-200 hover:shadow-md hover:from-whatsapp-dark hover:to-whatsapp-deep active:scale-95 md:flex"
             >
-              <WhatsAppIcon className="text-lg" />
-              WhatsApp
+              <WhatsAppIcon className="text-base sm:text-lg" />
+              <span>Quick Quote</span>
             </a>
 
             <CartButton />
@@ -144,9 +161,9 @@ export function Header() {
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={menuOpen}
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-hairline text-ink-900 transition-colors hover:bg-surface-muted lg:hidden"
+              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl border border-hairline text-ink-900 transition-colors hover:bg-surface-muted lg:hidden active:scale-95"
             >
               {menuOpen ? (
                 <CloseIcon className="text-xl" />
@@ -160,40 +177,46 @@ export function Header() {
 
       {/* ---------------------------------------------------- mobile menu */}
       <div
-        className={`overflow-hidden border-b border-hairline bg-white transition-[max-height,opacity] duration-300 lg:hidden ${
-          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        className={`overflow-hidden border-b border-hairline bg-white/98 backdrop-blur-lg transition-all duration-300 lg:hidden ${
+          menuOpen ? "max-h-[22rem] opacity-100 shadow-xl" : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
-        <Container className="flex flex-col gap-1 py-3">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`rounded-lg px-3 py-2.5 font-semibold transition-colors ${
-                isActive(link.href)
-                  ? "bg-brand-50 text-brand-800"
-                  : "text-ink-700 hover:bg-surface-muted"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <Container className="flex flex-col gap-1 py-4">
+          {navLinks.map((link) => {
+            const active = isActive(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
+                  active
+                    ? "bg-brand-50 text-brand-800 font-bold"
+                    : "text-ink-700 hover:bg-surface-muted"
+                }`}
+              >
+                <span>{link.label}</span>
+                {active && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand-600" />
+                )}
+              </Link>
+            );
+          })}
 
-          <div className="mt-2 grid grid-cols-2 gap-2 border-t border-hairline pt-3">
+          <div className="mt-3 grid grid-cols-2 gap-2 border-t border-hairline pt-3">
             <a
               href={whatsappLink(generalInquiryMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-11 items-center justify-center gap-2 rounded-xl bg-whatsapp text-sm font-semibold text-white"
+              className="flex h-11 items-center justify-center gap-2 rounded-xl bg-whatsapp text-sm font-bold text-white shadow-xs transition-colors hover:bg-whatsapp-dark"
             >
               <WhatsAppIcon className="text-lg" />
               WhatsApp
             </a>
             <a
               href={`tel:${siteConfig.phoneHref}`}
-              className="flex h-11 items-center justify-center gap-2 rounded-xl border border-hairline text-sm font-semibold text-ink-900"
+              className="flex h-11 items-center justify-center gap-2 rounded-xl border border-hairline text-sm font-semibold text-ink-900 transition-colors hover:bg-surface-muted"
             >
-              <PhoneIcon className="text-base" />
+              <PhoneIcon className="text-base text-brand-700" />
               Call Now
             </a>
           </div>

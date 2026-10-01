@@ -1,11 +1,11 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
-import { CheckIcon } from "@/components/ui/Icons";
+import { CheckCircle2Icon } from "@/components/ui/Icons";
 
 /**
- * Brief "added to your inquiry list" confirmation. Sits above the floating
- * WhatsApp button and disappears on its own after a couple of seconds.
+ * Toast confirmation notification when an instrument or product is added to the inquiry list.
+ * Appears bottom-left, auto-fades after a few seconds.
  */
 export function CartToast() {
   const { items, lastAdded, openDrawer, isDrawerOpen } = useCart();
@@ -15,31 +15,31 @@ export function CartToast() {
   const line = items.find((entry) => entry.slug === lastAdded);
 
   return (
-    <div
+    <aside
       role="status"
       aria-live="polite"
-      className="animate-toast-in fixed bottom-24 left-1/2 z-40 w-[min(22rem,calc(100vw-2rem))] -translate-x-1/2 rounded-xl border border-hairline bg-white p-3 shadow-xl shadow-ink-900/10 sm:bottom-6 sm:left-6 sm:translate-x-0"
+      className="animate-toast-in fixed bottom-20 left-4 z-40 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-slate-200/90 bg-white/95 p-3.5 shadow-xl shadow-ink-900/10 backdrop-blur-md sm:bottom-6 sm:left-6"
     >
       <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700">
-          <CheckIcon className="text-base" />
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+          <CheckCircle2Icon className="text-xl" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-ink-900">
-            Added to your inquiry list
+          <p className="text-xs font-bold text-ink-900 leading-tight">
+            Added to Inquiry Sheet
           </p>
-          <p className="truncate text-xs text-ink-500">
+          <p className="truncate text-xs text-ink-500 font-medium">
             {line?.name ?? "Product"}
           </p>
         </div>
         <button
           type="button"
           onClick={openDrawer}
-          className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-50"
+          className="shrink-0 rounded-lg bg-brand-50 px-3 py-1.5 text-xs font-bold text-brand-700 transition-colors hover:bg-brand-100 hover:text-brand-900 active:scale-95"
         >
-          View
+          View Sheet
         </button>
       </div>
-    </div>
+    </aside>
   );
 }

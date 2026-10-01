@@ -314,22 +314,26 @@ export function ProductArt({
 
   return (
     <div
-      className={`relative flex h-full w-full items-center justify-center overflow-hidden bg-gradient-to-br from-brand-50 via-white to-brand-100/70 ${className}`}
+      className={`relative flex h-full w-full items-center justify-center overflow-hidden bg-linear-to-b from-[#f8fafc] via-[#f0f7fb] to-[#e2f0f8] ${className}`}
       role="img"
       aria-label={product.name}
     >
-      {/* Soft halo so the illustration sits on something, not floating. */}
+      {/* Precision surgical instrument stage circles */}
       <div
         aria-hidden="true"
-        className="absolute top-1/2 left-1/2 aspect-square w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/70 blur-[2px]"
+        className="absolute top-1/2 left-1/2 aspect-square w-[82%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-200/35 bg-white/70 shadow-xs"
       />
       <div
         aria-hidden="true"
-        className="absolute -right-8 -bottom-10 aspect-square w-2/5 rounded-full bg-brand-200/40 blur-xl"
+        className="absolute top-1/2 left-1/2 aspect-square w-[58%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-200/25"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute -right-6 -bottom-6 aspect-square w-1/3 rounded-full bg-brand-300/20 blur-lg"
       />
       <svg
         viewBox="0 0 100 100"
-        className={`relative text-brand-700/90 ${glyphSize}`}
+        className={`relative text-brand-800 drop-shadow-2xs transition-transform duration-300 group-hover:scale-105 ${glyphSize}`}
         aria-hidden="true"
       >
         {glyph}

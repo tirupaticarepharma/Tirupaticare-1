@@ -6,45 +6,49 @@ import { WhatsAppComposer } from "@/components/contact/WhatsAppComposer";
 import { ContactBand } from "@/components/home/ContactBand";
 import {
   ClockIcon,
+  ExternalLinkIcon,
   MailIcon,
   MapPinIcon,
   PhoneIcon,
   WhatsAppIcon,
+  ZapIcon,
 } from "@/components/ui/Icons";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: `Call, WhatsApp or visit ${siteConfig.name} in ${siteConfig.address.city}. Address, phone number, email and business hours.`,
+  description: `Contact ${siteConfig.name} in ${siteConfig.address.city}. Surgical equipment quotations, WhatsApp desk, phone, email, and shop warehouse location.`,
 };
 
-/** The three ways to reach us, WhatsApp first. */
 const channels = [
   {
     icon: WhatsAppIcon,
-    label: "WhatsApp",
+    label: "WhatsApp Quick Quote Desk",
     value: siteConfig.phoneDisplay,
-    hint: "Fastest reply, usually within the hour",
+    hint: "Fastest response &bull; Typically within 15–30 mins",
     href: whatsappLink(generalInquiryMessage),
     accent: true,
     external: true,
+    action: "Open Chat",
   },
   {
     icon: PhoneIcon,
-    label: "Phone",
+    label: "Direct Phone Desk",
     value: siteConfig.phoneDisplay,
-    hint: "During business hours",
+    hint: "Operating hours &bull; Immediate verbal stock consult",
     href: `tel:${siteConfig.phoneHref}`,
     accent: false,
     external: false,
+    action: "Call Desk",
   },
   {
     icon: MailIcon,
-    label: "Email",
+    label: "Institutional Tenders & Orders",
     value: siteConfig.email,
-    hint: "For tenders, rate contracts and documentation",
+    hint: "For hospital tenders, POs, and rate contract contracts",
     href: `mailto:${siteConfig.email}`,
     accent: false,
     external: false,
+    action: "Send Email",
   },
 ];
 
@@ -52,69 +56,87 @@ export default function ContactPage() {
   return (
     <>
       {/* ---------------------------------------------------- page header */}
-      <section className="border-b border-hairline bg-linear-to-b from-brand-50 to-white">
-        <Container className="py-10 sm:py-14">
-          <p className="text-xs font-bold tracking-wider text-brand-600 uppercase">
-            Get in touch
-          </p>
-          <h1 className="mt-2 text-3xl font-extrabold text-ink-900 sm:text-4xl">
-            Contact {siteConfig.name}
+      <section className="border-b border-hairline bg-surface-muted/60">
+        <Container className="py-12 sm:py-16">
+          <div className="inline-flex items-center gap-2 rounded-full border border-brand-200/80 bg-brand-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-700 mb-3 shadow-2xs">
+            <ZapIcon className="text-xs" />
+            <span>Dedicated Procurement Support</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-ink-900">
+            Contact Tirupati Surgicals
           </h1>
-          <p className="mt-3 max-w-2xl leading-relaxed text-ink-500">
-            WhatsApp is the quickest way to reach us &mdash; send a list, a
-            photo or a catalogue number and we&rsquo;ll come straight back with
-            pricing and availability.
+
+          <p className="mt-3 max-w-2xl text-sm sm:text-base leading-relaxed text-ink-500">
+            WhatsApp is our fastest communication channel. Transmit an instrument list, manufacturer catalogue number, or photograph &mdash; our surgical specialists verify warehouse inventory and quote institutional pricing immediately.
           </p>
         </Container>
       </section>
 
       {/* -------------------------------------------------------- channels */}
-      <Container className="py-10 sm:py-12">
-        <div className="grid gap-4 sm:grid-cols-3">
+      <Container className="py-10 sm:py-14">
+        <div className="grid gap-5 sm:grid-cols-3">
           {channels.map((channel) => (
             <a
               key={channel.label}
               href={channel.href}
               target={channel.external ? "_blank" : undefined}
               rel={channel.external ? "noopener noreferrer" : undefined}
-              className={`group flex flex-col gap-3 rounded-2xl border p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ${
+              className={`group flex flex-col justify-between rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
                 channel.accent
-                  ? "border-whatsapp/30 bg-whatsapp/5 hover:border-whatsapp hover:shadow-whatsapp/10"
-                  : "border-hairline bg-white hover:border-brand-200 hover:shadow-brand-900/8"
+                  ? "border-emerald-500/30 bg-emerald-50/30 hover:border-emerald-500 hover:shadow-emerald-500/10"
+                  : "border-slate-200/90 bg-white hover:border-brand-300 hover:shadow-brand-950/5"
               }`}
             >
-              <span
-                className={`flex h-11 w-11 items-center justify-center rounded-xl text-xl ${
-                  channel.accent
-                    ? "bg-whatsapp text-white"
-                    : "bg-brand-50 text-brand-700"
-                }`}
-              >
-                <channel.icon />
-              </span>
               <div>
-                <p className="text-xs font-bold tracking-wide text-ink-500 uppercase">
-                  {channel.label}
-                </p>
-                <p className="mt-1 text-lg font-bold break-words text-ink-900">
-                  {channel.value}
-                </p>
-                <p className="mt-1 text-sm text-ink-500">{channel.hint}</p>
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl text-2xl shadow-2xs ${
+                      channel.accent
+                        ? "bg-linear-to-b from-whatsapp to-whatsapp-dark text-white"
+                        : "bg-brand-50 text-brand-700"
+                    }`}
+                  >
+                    <channel.icon />
+                  </span>
+
+                  <span className="text-xs font-bold text-brand-700 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                    {channel.action} &rarr;
+                  </span>
+                </div>
+
+                <div className="mt-4">
+                  <p className="text-xs font-bold tracking-wider text-ink-400 uppercase">
+                    {channel.label}
+                  </p>
+                  <p className="mt-1 text-lg font-bold break-words text-ink-900">
+                    {channel.value}
+                  </p>
+                  <p
+                    className="mt-1 text-xs text-ink-500 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: channel.hint }}
+                  />
+                </div>
               </div>
             </a>
           ))}
         </div>
 
         {/* ------------------------------------------- details + composer */}
-        <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-8">
-          <div className="flex flex-col gap-6">
+        <div className="mt-10 grid gap-8 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-5 flex flex-col gap-6">
             {/* Address */}
-            <div className="rounded-2xl border border-hairline bg-white p-5 sm:p-6">
-              <h2 className="flex items-center gap-2.5 text-lg font-bold text-ink-900">
-                <MapPinIcon className="text-brand-600" />
-                Visit the shop
-              </h2>
-              <address className="mt-3 text-sm leading-relaxed whitespace-pre-line text-ink-700 not-italic">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                  <MapPinIcon className="text-lg" />
+                </div>
+                <h2 className="text-base font-bold text-ink-900">
+                  Sales Office &amp; Warehouse
+                </h2>
+              </div>
+
+              <address className="mt-4 text-sm leading-relaxed whitespace-pre-line text-ink-700 not-italic font-normal">
                 {siteConfig.address.line1}
                 {"\n"}
                 {siteConfig.address.line2}
@@ -124,67 +146,84 @@ export default function ContactPage() {
                 {"\n"}
                 {siteConfig.address.country}
               </address>
-              <a
-                href={siteConfig.mapsLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-flex text-sm font-semibold text-brand-700 transition-colors hover:text-brand-900"
-              >
-                Get directions on Google Maps &rarr;
-              </a>
+
+              <div className="mt-4 pt-3 border-t border-hairline">
+                <a
+                  href={siteConfig.mapsLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-700 transition-colors hover:text-brand-900"
+                >
+                  <span>Open Directions on Google Maps</span>
+                  <ExternalLinkIcon className="text-xs" />
+                </a>
+              </div>
             </div>
 
             {/* Hours */}
-            <div className="rounded-2xl border border-hairline bg-white p-5 sm:p-6">
-              <h2 className="flex items-center gap-2.5 text-lg font-bold text-ink-900">
-                <ClockIcon className="text-brand-600" />
-                Business hours
-              </h2>
-              <dl className="mt-3 flex flex-col divide-y divide-hairline text-sm">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                    <ClockIcon className="text-lg" />
+                  </div>
+                  <h2 className="text-base font-bold text-ink-900">
+                    Operating Schedule
+                  </h2>
+                </div>
+
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[0.6875rem] font-bold text-emerald-700 border border-emerald-200/50">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Desk Active
+                </span>
+              </div>
+
+              <dl className="mt-4 flex flex-col divide-y divide-hairline text-xs sm:text-sm">
                 {siteConfig.hours.map((entry) => (
                   <div
                     key={entry.days}
                     className="flex justify-between gap-4 py-2.5"
                   >
-                    <dt className="font-medium text-ink-700">{entry.days}</dt>
+                    <dt className="font-semibold text-ink-700">{entry.days}</dt>
                     <dd className="text-right text-ink-500">{entry.time}</dd>
                   </div>
                 ))}
               </dl>
-              <p className="mt-3 text-xs leading-relaxed text-ink-500">
-                Emergency and after-hours requirements: send a WhatsApp message
-                and we&rsquo;ll respond as soon as we can.
+
+              <p className="mt-4 text-xs leading-relaxed text-ink-400 bg-surface-muted p-2.5 rounded-xl border border-hairline/60">
+                Emergency theatre supply: transmit message on WhatsApp outside office hours for priority dispatch handling.
               </p>
             </div>
           </div>
 
-          <WhatsAppComposer />
+          <div className="lg:col-span-7">
+            <WhatsAppComposer />
+          </div>
         </div>
       </Container>
 
       {/* ------------------------------------------------------------- map */}
-      <Section className="!pt-0 !pb-12">
+      <Section className="!pt-0 !pb-14">
         <Container>
-          <div className="overflow-hidden rounded-2xl border border-hairline">
+          <div className="overflow-hidden rounded-2xl border border-slate-200/90 shadow-xs">
             <iframe
-              /* [REPLACE_ME] Swap siteConfig.mapsEmbed for the real embed URL. */
               src={siteConfig.mapsEmbed}
-              title={`Map showing the location of ${siteConfig.name}`}
+              title={`Map displaying location of ${siteConfig.name}`}
               width="100%"
-              height="420"
+              height="400"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               style={{ border: 0 }}
               allowFullScreen
             />
           </div>
-          <p className="mt-3 text-xs text-ink-300">{fullAddress}</p>
+          <p className="mt-3 text-xs text-ink-400">{fullAddress}</p>
         </Container>
       </Section>
 
       <ContactBand
-        title="Ready when you are"
-        body="Send your requirement on WhatsApp and we'll reply with a written quote, stock status and delivery time."
+        title="Need an Emergency Dispatch Quote?"
+        body="Message our on-duty surgical coordinator with your product SKU or instrument photograph for immediate confirmation."
       />
     </>
   );

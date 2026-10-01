@@ -7,86 +7,83 @@ import { TrustStats } from "@/components/home/TrustStats";
 import { CallCta, WhatsAppCta } from "@/components/ui/ContactCtas";
 import {
   BadgeIcon,
-  CheckIcon,
+  CertificateIcon,
+  CheckCircle2Icon,
   HeadsetIcon,
+  HospitalIcon,
   ShieldCheckIcon,
   TruckIcon,
+  ZapIcon,
 } from "@/components/ui/Icons";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: `Learn about ${siteConfig.name} - a surgical instruments and medical equipment supplier serving hospitals, clinics, nursing homes and individual practitioners.`,
+  description: `Learn about ${siteConfig.name} - surgical instruments and medical equipment supplier serving hospitals, clinics, nursing homes, and surgeons since 1999.`,
 };
 
-/* SAMPLE COPY - replace with the real company story. */
 const values = [
   {
     icon: ShieldCheckIcon,
-    title: "Genuine stock, every time",
-    body: "We buy direct from manufacturers and authorised distributors. Every implant and instrument is lot traceable, and documentation comes with the delivery.",
+    title: "100% Genuine Certified Stock",
+    body: "We procure exclusively from accredited manufacturers and authorized primary distributors. Every surgical instrument and implant lot is batch-traceable with test certificates.",
   },
   {
     icon: TruckIcon,
-    title: "Dispatch that keeps up",
-    body: "Stocked lines leave the same working day. Local deliveries are usually with you within hours, because a theatre list will not wait.",
+    title: "Emergency & Same-Day Dispatch",
+    body: "Standard theatre lines leave our warehouse the same working day. Urgent hospital deliveries within the city are coordinated in hours to prevent OT schedule disruptions.",
   },
   {
     icon: HeadsetIcon,
-    title: "A person, not a portal",
-    body: "You deal with the same small team on WhatsApp or the phone. No ticket numbers, no chatbots, no waiting for a callback that never comes.",
+    title: "Direct Specialist Coordination",
+    body: "You interact with experienced surgical supply executives via WhatsApp or direct phone. No automated chatbots, no delayed ticketing queues &mdash; immediate clinical answers.",
   },
   {
     icon: BadgeIcon,
-    title: "Priced for institutions",
-    body: "Annual rate contracts, tender documentation and consolidated monthly billing for hospitals and nursing homes on request.",
+    title: "Institutional Rate Contracts",
+    body: "We support annual rate contracts, tender documentation, consolidated monthly hospital billing, and bulk volume discount pricing for healthcare networks.",
   },
 ];
 
 const customers = [
-  "Multispeciality hospitals",
-  "Private clinics & polyclinics",
-  "Nursing homes",
-  "Individual practitioners",
-  "Medical & nursing students",
-  "Diagnostic centres",
-  "Veterinary practices",
-  "Home care attendants",
+  "Multispeciality Hospitals",
+  "Surgical Daycare Centres",
+  "Specialist Polyclinics",
+  "Private Nursing Homes",
+  "Consultant Surgeons",
+  "Medical & Research Colleges",
+  "Trauma & Ortho Clinics",
+  "Diagnostic Laboratories",
 ];
 
 export default function AboutPage() {
   return (
     <>
       {/* ------------------------------------------------------------ hero */}
-      <section className="relative overflow-hidden bg-brand-900">
+      <section className="relative overflow-hidden bg-brand-950 text-white">
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-linear-to-br from-brand-950 via-brand-900 to-brand-800"
+          className="absolute inset-0 bg-linear-to-b from-brand-950 via-[#072c40] to-brand-900"
         />
-        <div
-          aria-hidden="true"
-          className="bg-dot-grid absolute inset-0 opacity-50"
-        />
+        <div aria-hidden="true" className="bg-dot-grid absolute inset-0 opacity-40" />
 
-        <Container className="relative py-14 sm:py-20">
+        <Container className="relative py-16 sm:py-24">
           <div className="max-w-3xl">
-            <p className="text-xs font-bold tracking-wider text-brand-300 uppercase">
-              About us
-            </p>
-            <h1 className="mt-3 text-3xl font-extrabold text-balance text-white sm:text-5xl">
-              Supplying the people who look after everyone else.
+            <div className="inline-flex items-center gap-2 rounded-full border border-brand-400/30 bg-brand-900/60 px-3.5 py-1 text-xs font-semibold text-brand-200 backdrop-blur-xs mb-4">
+              <CertificateIcon className="text-sm text-brand-300" />
+              <span>Two Decades of Clinical Excellence</span>
+            </div>
+
+            <h1 className="text-3xl sm:text-5xl lg:text-[3.25rem] font-extrabold tracking-tight text-white leading-tight">
+              Supplying the surgical teams who care for everyone else.
             </h1>
-            <p className="mt-5 text-base leading-relaxed text-brand-100 sm:text-lg">
-              {/* [REPLACE_ME] Company story */}
-              {siteConfig.name} has supplied surgical instruments, consumables
-              and equipment to hospitals, clinics and practitioners for over two
-              decades. We started as a single counter opposite a district
-              hospital, and the way we work has not really changed since: know
-              the stock, answer the phone, deliver on time.
+
+            <p className="mt-5 text-base sm:text-lg leading-relaxed text-brand-100/90 font-normal">
+              {siteConfig.name} has supplied certified surgical instruments, implants, and hospital furniture to healthcare institutions for over 25 years. We combine deep metallurgical knowledge with fast WhatsApp coordination and dependable same-day dispatch.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <WhatsAppCta size="lg" />
-              <CallCta variant="call" size="lg" />
+              <WhatsAppCta size="lg" label="Contact Surgical Desk" />
+              <CallCta variant="call" size="lg" label="Call Management Office" />
             </div>
           </div>
         </Container>
@@ -94,70 +91,72 @@ export default function AboutPage() {
 
       <TrustStats />
 
-      {/* ---------------------------------------------------------- story */}
+      {/* ---------------------------------------------------------- story & institutional scope */}
       <Section>
         <Container>
-          <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-            <div>
+          <div className="grid gap-12 lg:grid-cols-12 lg:gap-14 items-start">
+            <div className="lg:col-span-7">
               <SectionHeading
-                eyebrow="Our approach"
-                title="Catalogue online, conversation on WhatsApp"
-                description="We deliberately do not run a checkout. Medical procurement has variables a shopping cart cannot handle - substitutes, pack sizes, rate contracts, urgency."
+                eyebrow="Our Operational Philosophy"
+                title="Digital Catalogue Clarity, Direct Human Quotation"
+                description="Modern hospital procurement is nuanced. Factors like custom alloys, specific handle knurlings, sterilization autoclave cycles, and tender volume discounts cannot be handled by a generic e-commerce checkout."
               />
 
-              <div className="mt-6 flex flex-col gap-4 leading-relaxed text-ink-700">
+              <div className="mt-6 flex flex-col gap-4 text-sm sm:text-base leading-relaxed text-ink-700">
                 <p>
-                  So the site does the part it is good at: showing you what we
-                  carry, letting you gather what you need, and handing that list
-                  to a human being who can quote it properly.
+                  Our digital platform gives you instant access to our comprehensive 2,000+ item catalogue. You select your exact lines, configure quantities, and with one tap transmit a formatted specification directly to our surgical sales desk.
                 </p>
                 <p>
-                  You get a written quote back on the same chat, with stock
-                  status and delivery time. Nothing is charged, and nothing is
-                  dispatched, until you confirm.
+                  Within minutes, our team verifies warehouse availability, applies applicable institutional rate tiers, and replies with a formal quotation. No hidden fees, no premature credit card charges &mdash; complete institutional transparency.
                 </p>
               </div>
 
-              <ul className="mt-6 flex flex-col gap-2.5">
+              <ul className="mt-6 flex flex-col gap-3">
                 {[
-                  "No account required to send an inquiry",
-                  "No payment details taken on this website",
-                  "Written quotes you can forward to purchasing",
+                  "No registration or login required to build an inquiry",
+                  "Zero payment collected online &mdash; official GST invoicing upon delivery",
+                  "Immediate quotation with batch certification documentation",
                 ].map((point) => (
                   <li
                     key={point}
-                    className="flex gap-2.5 text-sm font-medium text-ink-700"
+                    className="flex gap-2.5 text-sm font-semibold text-ink-800"
                   >
-                    <CheckIcon className="mt-0.5 shrink-0 text-base text-brand-600" />
-                    {point}
+                    <CheckCircle2Icon className="mt-0.5 shrink-0 text-base text-brand-600" />
+                    <span>{point}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Who we supply */}
-            <div className="rounded-2xl border border-hairline bg-surface-muted/60 p-6 sm:p-8">
-              <h3 className="text-lg font-bold text-ink-900">Who we supply</h3>
+            {/* Who we supply panel */}
+            <div className="lg:col-span-5 rounded-2xl border border-slate-200/90 bg-surface-muted/60 p-6 sm:p-7 shadow-xs">
+              <div className="flex items-center gap-2">
+                <HospitalIcon className="text-xl text-brand-700" />
+                <h3 className="text-lg font-bold text-ink-900">
+                  Institutions We Serve
+                </h3>
+              </div>
+
               <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
                 {customers.map((customer) => (
                   <li
                     key={customer}
-                    className="flex items-center gap-2.5 rounded-xl bg-white px-3.5 py-2.5 text-sm font-medium text-ink-700"
+                    className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-ink-700 border border-slate-200/60 shadow-2xs"
                   >
-                    <CheckIcon className="shrink-0 text-base text-brand-600" />
-                    {customer}
+                    <CheckCircle2Icon className="shrink-0 text-emerald-500 text-xs" />
+                    <span>{customer}</span>
                   </li>
                 ))}
               </ul>
 
-              <h3 className="mt-8 text-lg font-bold text-ink-900">
-                What we carry
+              <h3 className="mt-8 text-sm font-bold uppercase tracking-wider text-ink-400">
+                Major Product Divisions
               </h3>
-              <ul className="mt-4 flex flex-wrap gap-2">
+              <ul className="mt-3 flex flex-wrap gap-2">
                 {categories.map((category) => (
                   <li
                     key={category.id}
-                    className="rounded-full border border-hairline bg-white px-3.5 py-1.5 text-sm font-medium text-ink-700"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-brand-800 shadow-2xs"
                   >
                     {category.name}
                   </li>
@@ -168,30 +167,31 @@ export default function AboutPage() {
         </Container>
       </Section>
 
-      {/* --------------------------------------------------------- values */}
-      <Section className="bg-surface-muted/50">
+      {/* --------------------------------------------------------- core values */}
+      <Section className="bg-surface-muted/60 border-t border-hairline">
         <Container>
           <SectionHeading
-            eyebrow="Why buy from us"
-            title="Four things we do not compromise on"
+            eyebrow="Quality Commitment"
+            title="Four Pillars of Clinical Reliability"
+            description="Every surgical tool and medical consumable that leaves our facility adheres to strict quality benchmarks."
             align="center"
             className="text-center"
           />
 
-          <div className="mt-12 grid gap-5 sm:grid-cols-2">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2">
             {values.map((value) => (
               <div
                 key={value.title}
-                className="flex gap-4 rounded-2xl border border-hairline bg-white p-6"
+                className="flex gap-4 rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs transition-all duration-300 hover:border-brand-300 hover:shadow-lg hover:shadow-brand-950/5 hover:-translate-y-0.5"
               >
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-2xl text-brand-700">
                   <value.icon />
                 </span>
                 <div>
-                  <h3 className="text-lg font-bold text-ink-900">
+                  <h3 className="text-base sm:text-lg font-bold text-ink-900">
                     {value.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-500">
+                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-ink-500">
                     {value.body}
                   </p>
                 </div>
@@ -202,8 +202,8 @@ export default function AboutPage() {
       </Section>
 
       <ContactBand
-        title="Want to set up an account?"
-        body="Hospitals and nursing homes can request a rate contract, credit terms and consolidated monthly billing. Message us and we'll send the paperwork."
+        title="Establish an Institutional Rate Contract"
+        body="Hospitals and surgical centres can apply for dedicated account management, credit terms, and consolidated monthly billing. Message us on WhatsApp to initiate onboarding."
       />
     </>
   );

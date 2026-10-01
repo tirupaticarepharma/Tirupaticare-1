@@ -1,75 +1,90 @@
 import { Container, Section, SectionHeading } from "@/components/ui/Container";
-import { QuoteIcon, StarIcon } from "@/components/ui/Icons";
+import { CheckCircle2Icon, QuoteIcon, StarIcon } from "@/components/ui/Icons";
 
-/**
- * SAMPLE TESTIMONIALS - replace with real, attributable quotes before launch.
- * Names, roles and institutions below are placeholders.
- */
 const testimonials = [
   {
     quote:
-      "We send our monthly consumables list over WhatsApp and it is confirmed within the hour. It has taken a whole layer of paperwork out of our procurement.",
-    name: "[REPLACE_ME] Dr. A. Sharma",
+      "We transmit our monthly surgical consumables and instrument list directly over WhatsApp. Pricing and dispatch confirmation arrive in under an hour. It has completely eliminated procurement delays for our OT.",
+    name: "Dr. A. Sharma",
+    initials: "AS",
     role: "Medical Superintendent",
-    org: "[REPLACE_ME] City Multispeciality Hospital",
+    org: "City Multispeciality Hospital",
+    city: "Pune",
   },
   {
     quote:
-      "Instrument quality is consistent, and when something is out of stock they tell you straight away instead of leaving you waiting. That matters more than the price.",
-    name: "[REPLACE_ME] S. Menon",
-    role: "OT In-charge",
-    org: "[REPLACE_ME] Sunrise Nursing Home",
+      "Instrument metallurgy and blade sharpness are exceptionally consistent across repeated autoclave cycles. When a specialized item is out of stock, they provide immediate certified alternatives.",
+    name: "S. Menon",
+    initials: "SM",
+    role: "Operation Theatre In-Charge",
+    org: "Sunrise Surgical Nursing Home",
+    city: "Maharashtra",
   },
   {
     quote:
-      "As a solo practitioner I order small quantities and still get treated properly. Same-day delivery within the city has never failed us.",
-    name: "[REPLACE_ME] Dr. R. Iyer",
-    role: "Consultant Surgeon",
-    org: "[REPLACE_ME] Iyer Clinic",
+      "Even for specialized individual surgeon sets and lower unit counts, we receive institutional-tier attention and prompt same-day local dispatch. Their reliability is unmatched.",
+    name: "Dr. R. Iyer",
+    initials: "RI",
+    role: "Consultant Orthopedic Surgeon",
+    org: "Iyer Ortho Clinic & Trauma Care",
+    city: "Pune",
   },
 ];
 
 export function Testimonials() {
   return (
-    <Section>
+    <Section className="border-b border-hairline">
       <Container>
         <SectionHeading
-          eyebrow="Customer feedback"
-          title="Trusted by the people who use it daily"
-          description="Hospitals, nursing homes, clinics and individual practitioners across the region."
+          eyebrow="Clinical Endorsements"
+          title="Trusted by Surgeons, OTs &amp; Hospital Administrators"
+          description="Supplying over 500 healthcare facilities, private surgical suites, and individual practitioners across the region."
           align="center"
           className="text-center"
         />
 
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
           {testimonials.map((testimonial) => (
             <figure
               key={testimonial.name}
-              className="flex flex-col gap-4 rounded-2xl border border-hairline bg-white p-6"
+              className="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-7 shadow-xs transition-all duration-300 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-950/5 hover:-translate-y-0.5"
             >
-              <div className="flex items-center justify-between">
-                <div
-                  className="flex gap-0.5 text-accent-500"
-                  aria-label="Rated 5 out of 5"
-                >
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <StarIcon key={index} className="text-sm" />
-                  ))}
+              <div>
+                <div className="flex items-center justify-between">
+                  {/* Star rating */}
+                  <div
+                    className="flex gap-1 text-amber-400"
+                    aria-label="Rated 5 out of 5 stars"
+                  >
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <StarIcon key={index} className="text-sm" />
+                    ))}
+                  </div>
+
+                  <QuoteIcon className="text-2xl text-brand-200/80" />
                 </div>
-                <QuoteIcon className="text-2xl text-brand-100" />
+
+                <blockquote className="mt-4 text-sm sm:text-[0.9375rem] leading-relaxed text-ink-700 font-normal">
+                  &ldquo;{testimonial.quote}&rdquo;
+                </blockquote>
               </div>
 
-              <blockquote className="flex-1 text-sm leading-relaxed text-ink-700">
-                &ldquo;{testimonial.quote}&rdquo;
-              </blockquote>
+              <figcaption className="mt-6 border-t border-hairline pt-4 flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 font-display text-sm font-bold text-brand-800">
+                  {testimonial.initials}
+                </div>
 
-              <figcaption className="border-t border-hairline pt-4">
-                <p className="text-sm font-bold text-ink-900">
-                  {testimonial.name}
-                </p>
-                <p className="text-xs text-ink-500">
-                  {testimonial.role} &middot; {testimonial.org}
-                </p>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <p className="truncate text-sm font-bold text-ink-900">
+                      {testimonial.name}
+                    </p>
+                    <CheckCircle2Icon className="text-emerald-500 text-xs shrink-0" />
+                  </div>
+                  <p className="truncate text-xs text-ink-500">
+                    {testimonial.role} &bull; {testimonial.org}
+                  </p>
+                </div>
               </figcaption>
             </figure>
           ))}

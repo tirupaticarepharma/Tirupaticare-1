@@ -1,11 +1,11 @@
 import { siteConfig } from "@/config/site";
 import { generalInquiryMessage, whatsappLink } from "@/lib/whatsapp";
 import { Button } from "@/components/ui/Button";
-import { PhoneIcon, WhatsAppIcon } from "@/components/ui/Icons";
+import { InfoIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/Icons";
 
 /**
- * The two engagement channels that appear beside every major call to action
- * on the site. Both read their number from src/config/site.ts.
+ * The two primary engagement channels that appear beside every major call to action.
+ * Both read numbers from src/config/site.ts.
  */
 
 export function WhatsAppCta({
@@ -28,9 +28,9 @@ export function WhatsAppCta({
       size={size}
       fullWidth={fullWidth}
       className={className}
-      aria-label={`${label} on ${siteConfig.phoneDisplay}`}
+      aria-label={`${label} with sales desk on ${siteConfig.phoneDisplay}`}
     >
-      <WhatsAppIcon className="text-[1.15em]" />
+      <WhatsAppIcon className="text-[1.2em]" />
       {label}
     </Button>
   );
@@ -56,6 +56,7 @@ export function CallCta({
       size={size}
       fullWidth={fullWidth}
       className={className}
+      aria-label={`Call ${siteConfig.phoneDisplay}`}
     >
       <PhoneIcon className="text-[1.05em]" />
       {label ?? `Call ${siteConfig.phoneDisplay}`}
@@ -64,8 +65,8 @@ export function CallCta({
 }
 
 /**
- * The "this is not an order" clarification. Shown next to every inquiry
- * button so nobody expects a checkout or a payment screen.
+ * Institutional procurement note. Explains that the platform provides instant
+ * catalogue quote generation without online payment checkout barriers.
  */
 export function InquiryNote({
   className = "",
@@ -75,14 +76,17 @@ export function InquiryNote({
   tone?: "muted" | "light";
 }) {
   return (
-    <p
-      className={`text-xs leading-relaxed ${
-        tone === "light" ? "text-brand-100/80" : "text-ink-500"
+    <div
+      className={`flex items-start gap-2 rounded-xl p-3 text-xs leading-relaxed ${
+        tone === "light"
+          ? "border border-white/15 bg-white/10 text-brand-100"
+          : "border border-slate-200/80 bg-surface-muted/90 text-ink-500"
       } ${className}`}
     >
-      No payment is taken on this site. Sending an inquiry opens WhatsApp with
-      your list ready to send &mdash; we&rsquo;ll confirm pricing &amp;
-      availability from there.
-    </p>
+      <InfoIcon className="mt-0.5 shrink-0 text-sm text-brand-600" />
+      <p>
+        <span className="font-semibold text-ink-900">Zero online checkout friction:</span> Sending an inquiry opens WhatsApp with your item list pre-filled. We promptly verify warehouse availability, quote institutional rates, and coordinate delivery.
+      </p>
+    </div>
   );
 }

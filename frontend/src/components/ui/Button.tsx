@@ -1,13 +1,9 @@
 import Link from "next/link";
 
 /**
- * One button component for the whole site so spacing, radius and focus rings
- * stay identical everywhere.
- *
- * Renders a <button>, a next/link <Link> (internal href) or a plain <a>
- * (external / tel: / mailto:) depending on what it is given.
- *
- * The `whatsapp` variant is the ONLY place the WhatsApp green is used.
+ * Unified button system for Tirupati Surgicals.
+ * Ensures consistent padding, typography, radius, focus states and micro-interactions
+ * across public pages, checkout inquiry flow, and modals.
  */
 
 type Variant =
@@ -24,28 +20,39 @@ type Size = "sm" | "md" | "lg";
 const base =
   "inline-flex items-center justify-center gap-2 rounded-xl font-semibold " +
   "transition-all duration-200 select-none whitespace-nowrap " +
-  "disabled:cursor-not-allowed disabled:opacity-50";
+  "active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 " +
+  "focus-visible:outline-2 focus-visible:outline-brand-600 focus-visible:outline-offset-2";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-brand-700 text-white shadow-sm shadow-brand-900/20 hover:bg-brand-800 active:bg-brand-900",
+    "bg-linear-to-b from-brand-600 to-brand-700 text-white shadow-sm shadow-brand-900/20 " +
+    "hover:from-brand-500 hover:to-brand-600 hover:shadow-md hover:shadow-brand-900/25 " +
+    "active:from-brand-700 active:to-brand-800 border border-brand-500/30",
   secondary:
-    "bg-brand-50 text-brand-800 hover:bg-brand-100 active:bg-brand-200",
+    "bg-brand-50 text-brand-800 border border-brand-200/60 hover:bg-brand-100 hover:border-brand-300 " +
+    "active:bg-brand-200/80",
   outline:
-    "border border-hairline bg-white text-ink-900 hover:border-brand-300 hover:bg-brand-50/60 active:bg-brand-100/60",
-  ghost: "text-brand-700 hover:bg-brand-50 active:bg-brand-100",
+    "border border-hairline bg-white text-ink-900 shadow-xs " +
+    "hover:border-brand-300 hover:bg-brand-50/50 hover:text-brand-900 " +
+    "active:bg-brand-100/50",
+  ghost:
+    "text-brand-700 hover:bg-brand-50/80 hover:text-brand-900 active:bg-brand-100/80",
   whatsapp:
-    "bg-whatsapp text-white shadow-sm shadow-whatsapp-dark/30 hover:bg-whatsapp-dark active:bg-whatsapp-deep",
+    "bg-linear-to-b from-whatsapp to-whatsapp-dark text-white shadow-sm shadow-whatsapp-dark/30 " +
+    "hover:from-whatsapp-dark hover:to-whatsapp-deep hover:shadow-md hover:shadow-whatsapp-dark/40 " +
+    "border border-white/20",
   call:
-    "border border-white/25 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 active:bg-white/25",
+    "border border-white/25 bg-white/10 text-white backdrop-blur-md shadow-sm " +
+    "hover:bg-white/20 hover:border-white/40 active:bg-white/30",
   light:
-    "bg-white text-brand-800 shadow-sm hover:bg-brand-50 active:bg-brand-100",
+    "bg-white text-brand-900 shadow-sm border border-slate-200/80 hover:bg-brand-50/60 " +
+    "hover:border-brand-200 hover:shadow-md active:bg-brand-100/60",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-3.5 text-sm",
-  md: "h-11 px-5 text-[0.9375rem]",
-  lg: "h-13 px-6 text-base sm:h-14 sm:px-7 sm:text-[1.0625rem]",
+  sm: "h-9 px-3.5 text-xs sm:text-sm tracking-tight",
+  md: "h-11 px-4 sm:px-5 text-sm sm:text-[0.9375rem] tracking-tight",
+  lg: "h-12 px-5 sm:h-13 sm:px-6 text-sm sm:text-base tracking-tight font-bold",
 };
 
 type CommonProps = {
@@ -98,8 +105,6 @@ export function Button(props: ButtonProps | AnchorProps) {
       );
     }
 
-    // External links (wa.me, tel:, mailto:, maps) open safely in a new tab
-    // where that makes sense; tel:/mailto: stay in the same context.
     const isProtocolLink = href.startsWith("tel:") || href.startsWith("mailto:");
     return (
       <a
